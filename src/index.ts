@@ -84,34 +84,59 @@ function createInputRow(item: Item) {
   return `
     <tr>
       <th>
+      ${item.label}
       </th>
       <td>
-        <input />
+        <input type="text" placeholder="${item.placeholder}" />
       </td>
     </tr>
   `;
+}
+
+function createMultiInputRow(item: Item) {
+  return `
+    <tr>
+      <th>
+      ${item.label}
+      </th>
+      <td>
+        ${createMultiTd(item.type, item.name, item.values)}
+      </td>
+    </tr>
+  `;
+}
+
+function createMultiTd(type: string, name: string, values) {
+  return values.map(value => return `<input type="${type}" name="${name}" value="${value.label}">${value.label} `).join('')
 }
 
 function createSelectRow(item: Item) {
   return `
     <tr>
       <th>
+      ${item.label}
       </th>
       <td>
         <select>
+        ${createSelectTd(item.options)}
         </select>
       </td>
     </tr>
   `;
 }
 
+function createSelectTd(options) {
+  return options.map(option => return `<option value="${option.value}}">${option.text}</option>`).join('')
+}
+
 function createTextAreaRow(item: Item) {
   return `
     <tr>
       <th>
+      ${item.label}
       </th>
       <td>
-        <textarea></textarea>
+        <textarea placeholder="${item.placeholder}"></textarea>
       </td>
     </tr>
   `;
@@ -122,7 +147,11 @@ function createTable() {
     .map((item) => {
       switch (item.tagName) {
         case "input":
-          return createInputRow(item);
+          if (item.type == 'radio' || item.type == 'checkbox') {
+            return createMultiInputRow(item);
+          } else {
+            return createInputRow(item);
+          }
         case "select":
           return createSelectRow(item);
         case "textarea":
